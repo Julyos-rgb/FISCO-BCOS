@@ -71,3 +71,4 @@ tools/BcosAirBuilder/*
 
 test/*
 /CMakeSettings.json
+.trae
