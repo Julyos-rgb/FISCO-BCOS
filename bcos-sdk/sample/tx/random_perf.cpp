@@ -45,6 +45,12 @@ int main(int argc, char** argv)
 
     long long count = std::stoul(argv[1]);
 
+    if (count < 10)
+    {
+        printf("Error: count must be at least 10, got %lld\n", count);
+        exit(1);
+    }
+
     printf("[Random Gen Test] ===>>>> count: %lld\n", count);
 
     long long i = 0;
@@ -70,10 +76,20 @@ int main(int argc, char** argv)
         (long long)std::chrono::duration_cast<std::chrono::milliseconds>(endPoint - startPoint)
             .count();
 
-    printf(
-        " [Random Gen Test] total count: %lld, total elapsed(ms): %lld, "
-        "count/s: %lld \n",
-        count, elapsedMS, 1000 * count / elapsedMS);
+    if (elapsedMS > 0)
+    {
+        printf(
+            " [Random Gen Test] total count: %lld, total elapsed(ms): %lld, "
+            "count/s: %lld \n",
+            count, elapsedMS, 1000 * count / elapsedMS);
+    }
+    else
+    {
+        printf(
+            " [Random Gen Test] total count: %lld, total elapsed(ms): %lld, "
+            "count/s: N/A (too fast to measure) \n",
+            count, elapsedMS);
+    }
 
     return 0;
 }
