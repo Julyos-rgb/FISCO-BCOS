@@ -66,6 +66,8 @@ struct bcos_sdk_c_config
     int disable_ssl;
     // ssl or sm_ssl
     std::string ssl_type;
+    // group id
+    std::string group;
     // cert config items is the content of the cert or the path of the cert file
     int is_cert_path;
     // ssl connection cert, effective with ssl_type is 'ssl'
@@ -116,14 +118,14 @@ void* thread_function(std::shared_ptr<bcos_sdk_c_config> arg)
         sdk->start();
         auto rpc = sdk->jsonRpc();
         rpc->getBlockNumber(
-            "group0", "", [](bcos::Error::Ptr error, std::shared_ptr<bcos::bytes> resp) {});
+            arg->group, "", [](bcos::Error::Ptr error, std::shared_ptr<bcos::bytes> resp) {});
         usleep(100);
         sdk->stop();
         sdk.reset(nullptr);
     }
 }
 std::shared_ptr<bcos_sdk_c_config> bcos_sdk_create_config(
-    int sm_ssl, std::string host, uint16_t port)
+    int sm_ssl, std::string host, uint16_t port, std::string group)
 {
     // create c-sdk config object
     auto config = std::make_shared<bcos_sdk_c_config>();
@@ -148,6 +150,7 @@ std::shared_ptr<bcos_sdk_c_config> bcos_sdk_create_config(
     config->send_rpc_request_to_highest_block_node = 1;
     // set ssl type
     config->ssl_type = sm_ssl ? "sm_ssl" : "ssl";
+    config->group = group;
     // --- set ssl cert ---------
     // cert config items is the path of file ,not the content
     config->is_cert_path = 1;
@@ -178,7 +181,7 @@ int main(int argc, char** argv)
     {
         is_sm_ssl = 0;
     }
-    auto config = bcos_sdk_create_config(is_sm_ssl, (char*)host, port);
+    auto config = bcos_sdk_create_config(is_sm_ssl, (char*)host, port, group);
     config->disable_ssl = 1;
     // check success or not
     std::thread threads[100];
