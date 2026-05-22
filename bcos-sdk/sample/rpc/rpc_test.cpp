@@ -33,10 +33,10 @@
 void usage(void)
 {
     printf("Desc: rpc methods call test\n");
-    printf("Usage: rpc <host> <port> <ssl type> <group_id>\n");
+    printf("Usage: rpc <host> <port> <ssl type> <group_id> [thread_count]\n");
     printf("Example:\n");
     printf("   ./rpc 127.0.0.1 20200 ssl group0\n");
-    printf("   ./rpc 127.0.0.1 20200 sm_ssl group0\n");
+    printf("   ./rpc 127.0.0.1 20200 sm_ssl group0 50\n");
     exit(0);
 }
 struct bcos_sdk_c_endpoint
@@ -169,11 +169,17 @@ int main(int argc, char** argv)
     int port = atoi(argv[2]);
     const char* type = argv[3];
     const char* group = argv[4];
+    int threadCount = (argc > 5) ? atoi(argv[5]) : 100;
+    if (threadCount <= 0)
+    {
+        threadCount = 100;
+    }
     printf(" [RPC] params ===>>>> \n");
     printf(" \t # host: %s\n", host);
     printf(" \t # port: %d\n", port);
     printf(" \t # type: %s\n", type);
     printf(" \t # group: %s\n", group);
+    printf(" \t # threadCount: %d\n", threadCount);
     int is_sm_ssl = 1;
     char const* pos = strstr(type, "sm_ssl");
     if (pos == NULL)
@@ -182,10 +188,10 @@ int main(int argc, char** argv)
     }
     auto config = bcos_sdk_create_config(is_sm_ssl, (char*)host, port, group);
     // check success or not
-    std::thread threads[100];
+    std::vector<std::thread> threads(threadCount);
     int rc;
     long t;
-    for (t = 0; t < 100; t++)
+    for (t = 0; t < threadCount; t++)
     {
         printf("In main: creating thread %ld\n", t);
         threads[t] = std::thread(thread_function, config);
@@ -196,7 +202,7 @@ int main(int argc, char** argv)
         //            exit(-1);
         //        }
     }
-    for (t = 0; t < 100; t++)
+    for (t = 0; t < threadCount; t++)
     {
         threads[t].join();
     }
