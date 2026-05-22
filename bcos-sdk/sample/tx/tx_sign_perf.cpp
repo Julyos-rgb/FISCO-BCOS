@@ -142,6 +142,12 @@ int main(int argc, char** argv)
     bool smCrypto = (std::string(argv[1]) == "true");
     uint32_t txCount = std::stoul(argv[2]);
 
+    if (txCount < 10)
+    {
+        printf("Error: txCount must be at least 10, got %u\n", txCount);
+        exit(1);
+    }
+
     printf("[Create Signed Tx Perf Test] ===>>>> smCrypto: %d, txCount: %u\n", smCrypto, txCount);
 
     auto keyPairBuilder = std::make_shared<bcos::cppsdk::utilities::KeyPairBuilder>();
@@ -181,10 +187,20 @@ int main(int argc, char** argv)
         (long long)std::chrono::duration_cast<std::chrono::microseconds>(endPoint - startPoint)
             .count();
 
-    printf(
-        " [Create Signed Tx Perf Test] total txs: %u, total elapsed(ms): %lld, avg(us): %lld, "
-        "txs/s: %lld \n",
-        txCount, elapsedMS, elapsedUS / txCount, 1000 * txCount / elapsedMS);
+    if (elapsedMS > 0)
+    {
+        printf(
+            " [Create Signed Tx Perf Test] total txs: %u, total elapsed(ms): %lld, avg(us): %lld, "
+            "txs/s: %lld \n",
+            txCount, elapsedMS, elapsedUS / txCount, 1000 * txCount / elapsedMS);
+    }
+    else
+    {
+        printf(
+            " [Create Signed Tx Perf Test] total txs: %u, total elapsed(ms): %lld, avg(us): %lld, "
+            "txs/s: N/A (too fast to measure) \n",
+            txCount, elapsedMS, elapsedUS / txCount);
+    }
 
     return 0;
 }
