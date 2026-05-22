@@ -78,7 +78,7 @@ int main(int argc, char** argv)
     uint64_t qps = (atol(argv[3])) * 1024 * 1024;
     // default payLoadSize is 1MB
     uint64_t payLoadSize = 1024 * 1024;
-    if (argc > 3)
+    if (argc > 4)
     {
         payLoadSize = (atol(argv[4]) * 1024);
     }
