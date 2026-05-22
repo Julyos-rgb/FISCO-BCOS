@@ -32,8 +32,11 @@ using namespace bcos::tool;
 
 void usage()
 {
-    std::cerr << "Usage: ./echo-client-sample qps(MBit/s) ${server_address} ${port} "
-                 "payloadSize(KBytes, default is 1MBytes)\n"
+    std::cerr << "Usage: ./echo-client-sample <hostIp> <port> <qps(MBit/s)> "
+                 "[payloadSize(KBytes, default is 1MBytes)]\n"
+              << "Example:\n"
+              << "    ./echo-client-sample 127.0.0.1 20200 1024\n"
+              << "    ./echo-client-sample 127.0.0.1 20200 1024 1024\n"
               << std::endl;
     exit(0);
 }
