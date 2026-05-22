@@ -146,7 +146,6 @@ std::shared_ptr<bcos_sdk_c_config> bcos_sdk_create_config(
     config->peers.push_back(ep);
     config->peers_count = 1;
     // --- set connected peers ---------
-    config->disable_ssl = 1;
     config->send_rpc_request_to_highest_block_node = 1;
     // set ssl type
     config->ssl_type = sm_ssl ? "sm_ssl" : "ssl";
@@ -182,7 +181,6 @@ int main(int argc, char** argv)
         is_sm_ssl = 0;
     }
     auto config = bcos_sdk_create_config(is_sm_ssl, (char*)host, port, group);
-    config->disable_ssl = 1;
     // check success or not
     std::thread threads[100];
     int rc;
